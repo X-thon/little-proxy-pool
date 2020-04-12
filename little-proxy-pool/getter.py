@@ -1,7 +1,8 @@
 from db import RedisClient
 from crawler import Crawler
+from settings import POOL_UPPER_THRESHOLD
 
-POOL_UPPER_THRESHOLD = 300
+
 
 class Getter():
     def __init__(self):

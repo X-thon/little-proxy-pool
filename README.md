@@ -48,9 +48,9 @@ $ python scheduler.py
 
 ```python
 # 随机获取代理池中一个代理(返回数据是str类型)
-response = requests.get(0.0.0.0:5555/random)
+response = requests.get("0.0.0.0:5555/random")
 # 获取代理池总量
-response = int(requests.get(0.0.0.0:5555/count))
+response = int(requests.get("0.0.0.0:5555/count"))
 ```
 
 

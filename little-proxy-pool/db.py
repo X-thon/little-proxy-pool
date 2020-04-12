@@ -1,21 +1,10 @@
 import redis
 from random import choice
+from settings import MAX_SCORE, MIN_SCORE, INITIAL_SCORE, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, REDIS_DB, REDIS_KEY
 
-# 设定评分 检测成功一次+1分，失败-1分，低于0分则将代理删去
-MAX_SCORE = 50
-MIN_SCORE = 0
-INITIAL_SCORE = 10
 
-# 设置redis配置项
-REDIS_HOST = 'localhost'
-REDIS_PORT = 6379  # 默认端口
-REDIS_PASSWORD = None
-REDIS_DB = 1  # 本地redis数据库0已被其他项目使用
-REDIS_KEY = 'proxies'
 
 # 配置redis客户端操作类
-
-
 class RedisClient(object):
     def __init__(self, host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD, db=REDIS_DB):
         """

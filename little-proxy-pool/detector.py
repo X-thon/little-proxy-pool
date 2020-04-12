@@ -2,12 +2,9 @@ import time
 import aiohttp
 import asyncio
 from db import RedisClient
+from settings import VALID_STATUS_CODES, TEST_URL, BATCH_TEST_SIZE
 
 
-VALID_STATUS_CODES = [200] # 包含正常的状态码
-# TEST_URL = 'http://www.baidu.com' 
-TEST_URL = "http://icanhazip.com" # 如果针对爬取时，可以将检测网站换为目标网站
-BATCH_TEST_SIZE = 100
 
 class Detector(object):
     def __init__(self):

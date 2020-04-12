@@ -3,13 +3,8 @@ from api import app
 from getter import Getter
 from detector import Detector
 from multiprocessing import Process
-from settings import API_HOST, API_PORT, API_THREADED
+from settings import API_HOST, API_PORT, API_THREADED, TESTER_CYCLE_INDEX, GETTER_CYCLE_INDEX, TESTER_ENABLED, GETTER_ENABLED, API_ENABLED
 
-TESTER_CYCLE_INDEX = 60
-GETTER_CYCLE_INDEX = 60
-TESTER_ENABLED = True
-GETTER_ENABLED = True
-API_ENABLED = True
 
 
 class Scheduler(object):

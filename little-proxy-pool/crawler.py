@@ -90,13 +90,15 @@ class Crawler(object, metaclass=ProxyMetaclass):
                 for tr in trs:
                     ip = tr.find('td:nth-child(1)').text()
                     port = tr.find('td:nth-child(2)').text()
-                    respond_speed = float(tr.find('td:nth-child(6)').text().replace('秒', ""))
+                    respond_speed = float(
+                        tr.find('td:nth-child(6)').text().replace('秒', ""))
                     if respond_speed >= 10:  # 去除响应速度太慢的链接
                         continue
                     yield ":".join([ip, port])
 
     def crawl_ihuan(self):
-        """获取小幻代理，由于小幻代理的页码采用了(我不知道的)编码
+        """
+        获取小幻代理，由于小幻代理的页码采用了(我不知道的)编码，
         此处使用硬编码，不支持修改抓取页数
         """
         start_url = 'https://ip.ihuan.me/address/5Lit5Zu9.html?page={}'
@@ -111,10 +113,60 @@ class Crawler(object, metaclass=ProxyMetaclass):
                 for tr in trs:
                     ip = tr.find('td:nth-child(1)').text()
                     port = tr.find('td:nth-child(2)').text()
-                    respond_speed = float(tr.find('td:nth-child(8)').text().replace('秒', ""))
+                    respond_speed = float(
+                        tr.find('td:nth-child(8)').text().replace('秒', ""))
                     if respond_speed >= 10 or ip == "" or port == "":
                         continue
                     yield ":".join([ip, port])
+
+    def crawl_ihuan_api(self, count=100):
+        """通过小幻代理的api，批量提取代理
+
+        :param count: 提取的数量, defaults to 100
+        :type count: int
+        """
+        from selenium import webdriver
+        from selenium.webdriver.support.ui import Select  # 用于下拉框
+        from selenium.webdriver.chrome.options import Options
+
+        chrome_options = Options()
+        chrome_options.add_argument('--headless')  # 无头模式
+        prefs = {
+            'profile.default_content_settings': {
+                'profile.default_content_setting_values': {
+                    'images': 2,  # 不加载图片
+                    # 'javascript': 2,  # 不加载JS
+                    # "User-Agent": ua,  # 更换UA
+                }}}
+        chrome_options.add_experimental_option("prefs",prefs)
+        
+        driver = webdriver.Chrome(chrome_options=chrome_options)
+        driver.get("https://ip.ihuan.me/ti.html")
+        # 以下是表单项
+        num = driver.find_element_by_name("num")  # 通过xpath定位居然出错了...
+        # port = driver.find_element_by_name("port")  # 端口
+        # kill_port = driver.find_element_by_name("kill_port")  # 排除端口
+        # address = driver.find_element_by_name("address")
+        # anonymity = driver.find_element_by_name("anonymity")  # 指定匿名程度
+        proxy_type = Select(driver.find_element_by_name("type"))  # 指定代理类型
+        # post = Select(driver.find_element_by_name("post"))  # 指定代理模式
+        sort_type = Select(driver.find_element_by_name("sort"))  # 指定排序方式
+        submit = driver.find_element_by_id("sub")
+
+        # 对表单进行操作
+        num.clear()
+        num.send_keys(str(count))
+        proxy_type.select_by_index(1)
+        sort_type.select_by_index(1)
+        submit.click()  # 点击后打开新窗口
+
+        windows = driver.window_handles
+        driver.switch_to_window(windows[-1])  # 切换至新窗口
+        content = driver.find_elements_by_class_name("panel-body")[0].text
+        content = content.split("\n")
+        driver.quit() # 关闭驱动
+        for proxy in content:
+            yield proxy
 
 
 # if __name__ == "__main__":

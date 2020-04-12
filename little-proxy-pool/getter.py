@@ -13,8 +13,10 @@ class Getter():
         判断是否达到了代理池限制
         """
         if self.redis.count() >= POOL_UPPER_THRESHOLD: 
+            print("代理池已满，获取器暂停获取代理")
             return True
         else:
+            print("代理池未满，获取器继续获取代理")
             return False
     
     def run(self):

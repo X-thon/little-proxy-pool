@@ -168,6 +168,28 @@ class Crawler(object, metaclass=ProxyMetaclass):
         for proxy in content:
             yield proxy
 
+    def crawl_89proxy(self, page_count=4):
+        """抓取89免费代理
+
+        :param page_count: 抓取页码数, defaults to 4
+        :type page_count: int
+        """        
+        start_url = "http://www.89ip.cn/index_{}.html"
+        urls = [start_url.format(page) for page in range(1, page_count+1)]
+        print(urls)
+        for url in urls:
+            print('Crawling', url)
+            html = get_page(url)
+            if html:
+                doc = pq(html)
+                # 由于此网页表头放在thead中, 因此不使用tr:gt(0)来筛掉第一行数据
+                trs = doc('.layui-table tbody tr').items()
+                for tr in trs:
+                    ip = tr.find('td:nth-child(1)').text().strip()
+                    port = tr.find('td:nth-child(2)').text().strip()
+                    print([ip, port])
+                    yield ":".join([ip, port])
+
 
 # if __name__ == "__main__":
 #     clawer = Crawler()
